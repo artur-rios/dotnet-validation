@@ -1,0 +1,81 @@
+<!doctype html><html lang=en><head><meta name=generator content="Hugo 0.164.0"><title>ArturRios.Validation</title><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><meta name=description content><meta name=keywords content><meta name=robots content="noodp"><link rel=canonical href=https://artur-rios.github.io/dotnet-validation/><link rel=stylesheet href=https://artur-rios.github.io/dotnet-validation/styles.css><link rel="shortcut icon" href=https://artur-rios.github.io/dotnet-validation/img/theme-colors/orange.png><link rel=apple-touch-icon href=https://artur-rios.github.io/dotnet-validation/img/theme-colors/orange.png><meta name=twitter:card content="summary"><meta property="og:locale" content="en"><meta property="og:type" content="website"><meta property="og:title" content="ArturRios.Validation"><meta property="og:description" content><meta property="og:url" content="https://artur-rios.github.io/dotnet-validation/"><meta property="og:site_name" content="ArturRios.Validation"><meta property="og:image" content="img/favicon/%!s(<nil>).png"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="627"><link href=/dotnet-validation/index.xml rel=alternate type=application/rss+xml title=ArturRios.Validation></head><body><div class="container center headings--one-size"><header class=header><div class=header__inner><div class=header__logo><a href=https://artur-rios.github.io/dotnet-validation/><div class=logo>ArturRios.Validation</div></a></div><ul class="menu menu--mobile"><li class=menu__trigger>Menu&nbsp;▾</li><li><ul class=menu__dropdown><li><a href=/dotnet-validation/>Overview</a></li><li><a href=https://www.artur-rios.tech/>Author</a></li><li><a href=https://github.com/artur-rios/dotnet-validation>GitHub</a></li><li><a href=https://artur-rios.github.io/dotnet-validation/coverage-report>Test Coverage</a></li></ul></li></ul></div><nav class=navigation-menu><ul class="navigation-menu__inner menu--desktop"><li><a href=/dotnet-validation/>Overview</a></li><li><a href=https://www.artur-rios.tech/>Author</a></li><li><a href=https://github.com/artur-rios/dotnet-validation>GitHub</a></li><li><a href=https://artur-rios.github.io/dotnet-validation/coverage-report>Test Coverage</a></li></ul></nav></header><div class=content><div class=index-content><h1 id=arturriosvalidation>ArturRios.Validation</h1><p>A thin, opinionated model-validation layer for .NET built on top of
+<a href=https://docs.fluentvalidation.net/>FluentValidation</a>. It wraps FluentValidation&rsquo;s
+<code>AbstractValidator&lt;T></code> in a <code>FluentValidator&lt;T></code> base class that turns validation results into the shapes
+an application actually consumes: a plain array of error messages, or an
+<a href=https://www.nuget.org/packages/ArturRios.Output><code>ArturRios.Output</code></a> <code>ProcessOutput</code> / <code>DataOutput&lt;T></code>
+envelope — with optional stripping of the quotes and periods FluentValidation puts in its default
+messages.</p><h2 id=the-api-surface>The API surface</h2><table><thead><tr><th>Type</th><th>What it does</th></tr></thead><tbody><tr><td><code>FluentValidator&lt;T></code></td><td>Base validator: subclass it, declare <code>RuleFor(...)</code> rules in the constructor, get error/<code>Output</code> helpers for free.</td></tr><tr><td><code>IFluentValidator&lt;T></code></td><td>Abstraction over <code>FluentValidator&lt;T></code> (extends FluentValidation&rsquo;s <code>IValidator&lt;T></code>) for DI and testing.</td></tr></tbody></table><pre class=mermaid>classDiagram
+    class IValidator~T~ {
+        &lt;&lt;interface&gt;&gt;
+    }
+    class IFluentValidator~T~ {
+        &lt;&lt;interface&gt;&gt;
+        +ValidateAndReturnErrors(T model, bool removeSpecialChars) string[]
+    }
+    class AbstractValidator~T~ {
+        +Validate(T model) ValidationResult
+    }
+    class FluentValidator~T~ {
+        +ValidateAndReturnErrors(T model, bool removeSpecialChars) string[]
+        +ValidateAndReturnProcessOutput(T model, bool removeSpecialChars) ProcessOutput
+        +ValidateAndReturnDataOutput(T model, bool removeSpecialChars) DataOutput~T~
+    }
+    IValidator~T~ &lt;|-- IFluentValidator~T~
+    AbstractValidator~T~ &lt;|-- FluentValidator~T~
+    IFluentValidator~T~ &lt;|.. FluentValidator~T~
+</pre><p><code>FluentValidator&lt;T></code> exposes three helpers, each accepting an optional <code>removeSpecialChars</code> flag:</p><table><thead><tr><th>Method</th><th>Returns</th><th>Use when</th></tr></thead><tbody><tr><td><code>ValidateAndReturnErrors(model, removeSpecialChars)</code></td><td><code>string[]</code></td><td>You only need the raw error messages (empty array when valid).</td></tr><tr><td><code>ValidateAndReturnProcessOutput(model, removeSpecialChars)</code></td><td><code>ProcessOutput</code></td><td>You want a success/error envelope, without a payload.</td></tr><tr><td><code>ValidateAndReturnDataOutput(model, removeSpecialChars)</code></td><td><code>DataOutput&lt;T></code></td><td>You want the envelope <strong>and</strong> the validated model carried back.</td></tr></tbody></table><p>When <code>removeSpecialChars</code> is <code>true</code>, the characters <code>'</code> and <code>.</code> are removed from every message — handy
+when FluentValidation&rsquo;s default <code>"'Name' must not be empty."</code> clashes with your presentation layer.</p><h2 id=installation>Installation</h2><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-bash data-lang=bash><span style=display:flex><span>dotnet add package ArturRios.Validation
+</span></span></code></pre></div><p>Targets <strong>.NET 10</strong>. It pulls in <code>FluentValidation</code> and <code>ArturRios.Output</code> transitively.</p><h2 id=quick-start>Quick start</h2><p>Define a model and a validator, declaring rules exactly as you would with FluentValidation:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#66d9ef>using</span> ArturRios.Validation;
+</span></span><span style=display:flex><span><span style=color:#66d9ef>using</span> FluentValidation;
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>Person</span>
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>string</span> Name { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; } = <span style=color:#66d9ef>string</span>.Empty;
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> <span style=color:#66d9ef>int</span> Age { <span style=color:#66d9ef>get</span>; <span style=color:#66d9ef>set</span>; }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>public</span> <span style=color:#66d9ef>class</span> <span style=color:#a6e22e>PersonValidator</span> : FluentValidator&lt;Person&gt;
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>public</span> PersonValidator()
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>        RuleFor(p =&gt; p.Name).NotEmpty();
+</span></span><span style=display:flex><span>        RuleFor(p =&gt; p.Age).GreaterThan(<span style=color:#ae81ff>0</span>);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span></code></pre></div><p>Then validate and consume the result in whichever shape you need:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#66d9ef>var</span> validator = <span style=color:#66d9ef>new</span> PersonValidator();
+</span></span><span style=display:flex><span><span style=color:#66d9ef>var</span> person = <span style=color:#66d9ef>new</span> Person { Name = <span style=color:#e6db74>&#34;&#34;</span>, Age = <span style=color:#ae81ff>0</span> };
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// a) Just the error messages</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>string</span>[] errors = validator.ValidateAndReturnErrors(person);
+</span></span><span style=display:flex><span><span style=color:#75715e>// =&gt; [ &#34;&#39;Name&#39; must not be empty.&#34;, &#34;&#39;Age&#39; must be greater than &#39;0&#39;.&#34; ]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// b) Same, but strip the quotes and periods FluentValidation adds</span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>string</span>[] clean = validator.ValidateAndReturnErrors(person, removeSpecialChars: <span style=color:#66d9ef>true</span>);
+</span></span><span style=display:flex><span><span style=color:#75715e>// =&gt; [ &#34;Name must not be empty&#34;, &#34;Age must be greater than 0&#34; ]</span>
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// c) A ProcessOutput envelope (Success is false when there are errors)</span>
+</span></span><span style=display:flex><span>ProcessOutput result = validator.ValidateAndReturnProcessOutput(person);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#75715e>// d) A DataOutput&lt;T&gt; envelope that also carries the validated model back</span>
+</span></span><span style=display:flex><span>DataOutput&lt;Person&gt; dataResult = validator.ValidateAndReturnDataOutput(person);
+</span></span></code></pre></div><h2 id=working-with-the-output-envelopes>Working with the Output envelopes</h2><p>Both <code>ProcessOutput</code> and <code>DataOutput&lt;T></code> come from
+<a href=https://www.nuget.org/packages/ArturRios.Output><code>ArturRios.Output</code></a>:</p><ul><li><code>Success</code> is <code>true</code> when there are no errors, <code>false</code> otherwise.</li><li><code>Errors</code> holds the validation messages (already run through <code>removeSpecialChars</code> if requested).</li><li><code>DataOutput&lt;T>.Data</code> carries the model you passed in — it is populated regardless of whether validation
+succeeded, so you can inspect the offending values alongside the errors.</li></ul><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-csharp data-lang=csharp><span style=display:flex><span><span style=color:#66d9ef>var</span> output = validator.ValidateAndReturnDataOutput(person, removeSpecialChars: <span style=color:#66d9ef>true</span>);
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span><span style=color:#66d9ef>if</span> (!output.Success)
+</span></span><span style=display:flex><span>{
+</span></span><span style=display:flex><span>    <span style=color:#66d9ef>foreach</span> (<span style=color:#66d9ef>var</span> error <span style=color:#66d9ef>in</span> output.Errors)
+</span></span><span style=display:flex><span>    {
+</span></span><span style=display:flex><span>        Console.WriteLine(error);
+</span></span><span style=display:flex><span>    }
+</span></span><span style=display:flex><span>}
+</span></span><span style=display:flex><span>
+</span></span><span style=display:flex><span>Person? echoed = output.Data; <span style=color:#75715e>// the same instance you validated</span>
+</span></span></code></pre></div><h2 id=dependency-injection>Dependency injection</h2><p>Because <code>FluentValidator&lt;T></code> implements <code>IFluentValidator&lt;T></code> (which extends FluentValidation&rsquo;s
+<code>IValidator&lt;T></code>), you can register and inject validators against the abstraction:</p><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;-webkit-text-size-adjust:none><code class=language-csharp data-lang=csharp><span style=display:flex><span>services.AddScoped&lt;IFluentValidator&lt;Person&gt;, PersonValidator&gt;();
+</span></span></code></pre></div></div><div class=posts><div class=pagination><div class=pagination__buttons></div></div></div></div><footer class=footer><div class=footer__inner><div class=copyright><span>© 2026 Powered by <a href=https://gohugo.io>Hugo</a></span>
+<span><a href=https://github.com/mirus-ua/hugo-theme-re-terminal target=_blank>Original theme</a> made by <a href=https://github.com/mirus-ua target=_blank>Mirus</a></span>
+<span><a href=https://github.com/artur-rios/hugo-theme-re-terminal target=_blank>This version</a> is made by <a href=https://github.com/artur-rios target=_blank>Artur Rios</a></span></div></div></footer><script type=text/javascript src=/dotnet-validation/bundle.min.js></script></div><script type=module>
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+  </script></body></html>
