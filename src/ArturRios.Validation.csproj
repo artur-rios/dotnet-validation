@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <Authors>Artur Rios</Authors>
+    <Company>Artur Rios</Company>
+    <Description>Provides model validation for .NET applications. Built on top of the FluentValidation library</Description>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <IncludeSymbols>false</IncludeSymbols>
+    <Nullable>enable</Nullable>
+    <PackageId>ArturRios.Validation</PackageId>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl></PackageProjectUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags></PackageTags>
+    <RepositoryUrl>https://github.com/artur-rios/dotnet-validation</RepositoryUrl>
+    <Version>1.0.0</Version>
+  </PropertyGroup>
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="ArturRios.Output" Version="2.0.1" />
+    <PackageReference Include="FluentValidation" Version="12.1.1" />
+  </ItemGroup>
+</Project>
+

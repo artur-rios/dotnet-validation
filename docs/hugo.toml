@@ -1,0 +1,40 @@
+baseURL = 'https://artur-rios.github.io/dotnet-validation'
+locale = 'en-us'
+title = 'ArturRios.Validation'
+theme = 'hugo-theme-re-terminal'
+
+# .NET only — mounts a generated coverage report as static files.
+[module]
+[[module.mounts]]
+source = 'coverage-report'
+target = 'static/coverage-report'
+
+[params]
+author_email = 'arturdev@duck.com'
+name = 'Artur Rios'
+
+[params.logo]
+logoText = 'ArturRios.Validation'
+
+[menu]
+[[menu.main]]
+identifier = "overview"
+name = "Overview"
+url = "/"
+weight = 10
+
+[[menu.main]]
+identifier = "author"
+name = "Author"
+url = "https://www.artur-rios.tech/"
+weight = 90
+[[menu.main]]
+identifier = "github"
+name = "GitHub"
+url = "https://github.com/artur-rios/dotnet-validation"
+weight = 100
+[[menu.main]]
+identifier = "test-coverage"
+name = "Test Coverage"
+url = "https://artur-rios.github.io/dotnet-validation/coverage-report"
+weight = 110
