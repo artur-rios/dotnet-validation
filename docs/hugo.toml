@@ -31,6 +31,9 @@ locale = 'en-us'
     source = 'content/en'
     target = 'content'
   [[module.mounts]]
+    source = 'coverage-report'
+    target = 'static/coverage-report'
+  [[module.mounts]]
     source = 'static'
     target = 'static'
 
@@ -82,6 +85,11 @@ locale = 'en-us'
   name = 'Documentation'
   weight = 10
   url = '/docs/'
+
+[[menu.main]]
+  name = 'Test Coverage'
+  weight = 20
+  url = '/coverage-report/'
 
 [[menu.main]]
   name = 'GitHub'
