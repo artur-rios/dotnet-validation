@@ -1,8 +1,10 @@
-+++
-title = 'ArturRios.Validation'
-+++
-
-# ArturRios.Validation
+---
+title: Documentation
+linkTitle: Documentation
+weight: 20
+description: >-
+  A thin, opinionated model-validation layer for .NET built on top of [FluentValidation](https://docs.fluentvalidation.net/). It wraps FluentValidation's...
+---
 
 A thin, opinionated model-validation layer for .NET built on top of
 [FluentValidation](https://docs.fluentvalidation.net/). It wraps FluentValidation's
