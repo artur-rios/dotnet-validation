@@ -290,7 +290,9 @@ var assemblies = [
   {
     "name": "ArturRios.Validation",
     "classes": [
-      { "name": "ArturRios.Validation.FluentValidator\u003CT\u003E", "rp": "ArturRios.Validation_FluentValidator_1.html", "cl": 14, "ucl": 0, "cal": 14, "tl": 44, "cb": 6, "tb": 6, "cm": 5, "fcm": 5, "tm": 5, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { "crp": 6,  "cc": 6,  "cov": 100,  "bcov": 100 } },
+      { "name": "ArturRios.Validation.FluentValidator\u003CT\u003E", "rp": "ArturRios.Validation_FluentValidator_1.html", "cl": 17, "ucl": 0, "cal": 17, "tl": 207, "cb": 6, "tb": 6, "cm": 8, "fcm": 8, "tm": 8, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { "crp": 6,  "cc": 6,  "cov": 100,  "bcov": 100 } },
+      { "name": "System.Text.RegularExpressions.Generated", "rp": "ArturRios.Validation_Generated.html", "cl": 22, "ucl": 0, "cal": 22, "tl": 102, "cb": 6, "tb": 6, "cm": 5, "fcm": 5, "tm": 5, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { "crp": 4,  "cc": 4,  "cov": 100,  "bcov": 100 } },
+      { "name": "System.Text.RegularExpressions.Generated.\u003CRegexGenerator_g\u003EFD93B0AF2605CF08863D6156E7C76B24C81DAC64A30AC16C55C4EFEE84F665C9B__SpecialChars_0", "rp": "ArturRios.Validation__RegexGenerator_g_FD93B0AF26030AC16C55C4EFEE84F665C9B__SpecialChars_0.html", "cl": 22, "ucl": 0, "cal": 22, "tl": 102, "cb": 6, "tb": 6, "cm": 5, "fcm": 5, "tm": 5, "lch": [], "bch": [], "mch": [], "mfch": [], "hc": [], "metrics": { "crp": 4,  "cc": 4,  "cov": 100,  "bcov": 100 } },
     ]},
 ];
 
