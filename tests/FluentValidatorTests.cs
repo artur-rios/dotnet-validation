@@ -3,6 +3,7 @@ using ArturRios.Validation.Tests.Mock;
 
 namespace ArturRios.Validation.Tests;
 
+[Trait("Category", "Unit")]
 public class FluentValidatorTests
 {
     private readonly PersonValidator _validator = new();

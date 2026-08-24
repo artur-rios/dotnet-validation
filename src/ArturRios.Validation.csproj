@@ -14,9 +14,9 @@
     <Nullable>enable</Nullable>
     <PackageId>ArturRios.Validation</PackageId>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <PackageProjectUrl></PackageProjectUrl>
+    <PackageProjectUrl>https://artur-rios.github.io/dotnet-validation</PackageProjectUrl>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags></PackageTags>
+    <PackageTags>utilities;validation;.net;fluentvalidation</PackageTags>
     <RepositoryUrl>https://github.com/artur-rios/dotnet-validation</RepositoryUrl>
     <Version>1.1.0</Version>
   </PropertyGroup>
