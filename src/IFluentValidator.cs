@@ -22,17 +22,22 @@ public interface IFluentValidator<in T> : IValidator<T>
     /// </summary>
     /// <param name="model">The model to validate.</param>
     /// <param name="removeSpecialChars">
-    /// When <see langword="true"/>, strips the apostrophes and full stops FluentValidation puts in its
-    /// default messages, turning <c>"'Name' must not be empty."</c> into <c>"Name must not be empty"</c>.
+    /// When <see langword="true"/>, strips the quoting apostrophes and sentence-ending full stops
+    /// FluentValidation puts in its default messages, turning <c>"'Name' must not be empty."</c> into
+    /// <c>"Name must not be empty"</c>. An apostrophe inside a word and a full stop inside a value
+    /// (<c>0.5</c>) are kept.
     /// </param>
-    /// <returns>One message per broken rule, or an empty array when the model is valid.</returns>
+    /// <returns>
+    /// One non-blank message per broken rule, or an empty array when the model is valid. A failure whose
+    /// message is blank is reported with FluentValidation's wording for a broken condition.
+    /// </returns>
     string[] ValidateAndReturnErrors(T model, bool removeSpecialChars = false);
 
     /// <summary>
     /// Validates <paramref name="model"/> and returns the failures as a <see cref="ProcessOutput"/> envelope.
     /// </summary>
     /// <param name="model">The model to validate.</param>
-    /// <param name="removeSpecialChars">Strips the apostrophes and full stops from the messages when <see langword="true"/>.</param>
+    /// <param name="removeSpecialChars">Strips the quoting apostrophes and sentence-ending full stops from the messages when <see langword="true"/>.</param>
     /// <returns>
     /// An envelope whose <see cref="ProcessOutput.Success"/> is <see langword="true"/> exactly when the
     /// model is valid.
@@ -43,7 +48,7 @@ public interface IFluentValidator<in T> : IValidator<T>
     /// Asynchronously validates <paramref name="model"/> and returns the failure messages.
     /// </summary>
     /// <param name="model">The model to validate.</param>
-    /// <param name="removeSpecialChars">Strips the apostrophes and full stops from the messages when <see langword="true"/>.</param>
+    /// <param name="removeSpecialChars">Strips the quoting apostrophes and sentence-ending full stops from the messages when <see langword="true"/>.</param>
     /// <param name="cancellationToken">Cancels the validation.</param>
     /// <returns>One message per broken rule, or an empty array when the model is valid.</returns>
     /// <remarks>
@@ -61,7 +66,7 @@ public interface IFluentValidator<in T> : IValidator<T>
     /// <see cref="ProcessOutput"/> envelope.
     /// </summary>
     /// <param name="model">The model to validate.</param>
-    /// <param name="removeSpecialChars">Strips the apostrophes and full stops from the messages when <see langword="true"/>.</param>
+    /// <param name="removeSpecialChars">Strips the quoting apostrophes and sentence-ending full stops from the messages when <see langword="true"/>.</param>
     /// <param name="cancellationToken">Cancels the validation.</param>
     /// <returns>
     /// An envelope whose <see cref="ProcessOutput.Success"/> is <see langword="true"/> exactly when the
