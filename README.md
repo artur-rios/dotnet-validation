@@ -1,7 +1,7 @@
 # ArturRios.Validation
 
 [![Docs](https://img.shields.io/badge/docs-website-blue)](https://artur-rios.github.io/dotnet-validation)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE)
+[![License: Attribution](https://img.shields.io/badge/License-Attribution-blue.svg)](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE)
 [![ArturRios.Validation](https://img.shields.io/nuget/v/ArturRios.Validation.svg?label=ArturRios.Validation)](https://www.nuget.org/packages/ArturRios.Validation)
 
 **`ArturRios.Validation`** — a thin, opinionated model-validation layer for .NET built on top of
@@ -146,4 +146,4 @@ Building from source, running the tests, the branching model and the release pro
 [CONTRIBUTING.md](https://github.com/artur-rios/dotnet-validation/blob/main/CONTRIBUTING.md).
 
 ## Legal Details
-Licensed under the [MIT License](https://en.wikipedia.org/wiki/MIT_License) — see [LICENSE](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE).
+This project is licensed under the [Artur Rios Attribution License](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE). It is free and open source: you may view, use, fork, modify, and extend it, provided you credit the author, Artur Rios, with a link to [artur-rios.tech](https://artur-rios.tech) or [github.com/artur-rios](https://github.com/artur-rios).

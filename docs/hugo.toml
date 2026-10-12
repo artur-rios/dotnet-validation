@@ -58,7 +58,7 @@ locale = 'en-us'
       description = "A thin, opinionated model-validation layer for .NET built on top of FluentValidation that returns validation results as an array of error messages or an ArturRios.Output envelope."
 
 [params]
-  copyright.authors = 'Artur Rios | [MIT License](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE)'
+  copyright.authors = 'Artur Rios | [Artur Rios Attribution License](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE)'
   privacy_policy = ''
   github_repo = 'https://github.com/artur-rios/dotnet-validation'
   github_branch = 'main'
