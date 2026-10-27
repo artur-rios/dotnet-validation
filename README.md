@@ -1,5 +1,11 @@
 # ArturRios.Validation
 
+> [!NOTE]
+> This is the real, open-source code of dotnet-validation. Its home is Forgejo, at
+> https://git.techcraftsmen.net/artur-rios/dotnet-validation; the copy on GitHub is a read-only mirror, for viewing only, and
+> its issues and pull requests are not followed. If you want to contribute, email me at
+> arturdev@duck.com.
+
 [![Docs](https://img.shields.io/badge/docs-website-blue)](https://docs.artur-rios.tech/dotnet-validation)
 [![License: Attribution](https://img.shields.io/badge/License-Attribution-blue.svg)](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE)
 [![ArturRios.Validation](https://img.shields.io/nuget/v/ArturRios.Validation.svg?label=ArturRios.Validation)](https://www.nuget.org/packages/ArturRios.Validation)
