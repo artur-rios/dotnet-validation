@@ -6,9 +6,11 @@
 > its issues and pull requests are not followed. If you want to contribute, email me at
 > arturdev@duck.com.
 
-[![Docs](https://img.shields.io/badge/docs-website-blue)](https://artur-rios.github.io/dotnet-validation)
+[![Docs](https://img.shields.io/badge/docs-website-blue)](https://docs.artur-rios.tech/dotnet-validation)
 [![License: Attribution](https://img.shields.io/badge/License-Attribution-blue.svg)](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE)
 [![ArturRios.Validation](https://img.shields.io/nuget/v/ArturRios.Validation.svg?label=ArturRios.Validation)](https://www.nuget.org/packages/ArturRios.Validation)
+
+This repository lives at <https://git.techcraftsmen.net/artur-rios/dotnet-validation>. The GitHub repository is a read-only mirror of it.
 
 **`ArturRios.Validation`** — a thin, opinionated model-validation layer for .NET built on top of
 [FluentValidation](https://docs.fluentvalidation.net/). It wraps FluentValidation's `AbstractValidator<T>`
@@ -17,7 +19,7 @@ consumes: a plain array of error messages, or an [`ArturRios.Output`](https://ww
 `ProcessOutput` / `DataOutput<T>` envelope — with optional stripping of the quotes and periods that
 FluentValidation puts in its default messages.
 
-- 📚 **Full documentation:** <https://artur-rios.github.io/dotnet-validation>
+- 📚 **Full documentation:** <https://docs.artur-rios.tech/dotnet-validation>
 
 ## What you get
 
@@ -139,7 +141,7 @@ like. FluentValidation refuses to run one from a synchronous call and throws
 
 | Page | What's there |
 |---|---|
-| [Overview](https://artur-rios.github.io/dotnet-validation/docs/) | Concepts, the full API surface, and end-to-end examples. |
+| [Overview](https://docs.artur-rios.tech/dotnet-validation/docs/) | Concepts, the full API surface, and end-to-end examples. |
 
 ## Changelog
 

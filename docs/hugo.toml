@@ -1,4 +1,4 @@
-baseURL = 'https://artur-rios.github.io/dotnet-validation/'
+baseURL = 'https://docs.artur-rios.tech/dotnet-validation/'
 title = 'ArturRios.Validation'
 
 # Docsy is installed as the @docsy/theme NPM package (see package.json)
