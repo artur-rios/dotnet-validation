@@ -3,7 +3,7 @@ title: Documentation
 linkTitle: Documentation
 weight: 20
 description: >-
-  A thin, opinionated model-validation layer for .NET built on top of [FluentValidation](https://docs.fluentvalidation.net/). It wraps FluentValidation's...
+  A thin, opinionated model-validation layer for .NET built on top of FluentValidation that returns validation results as an array of error messages or an ArturRios.Output envelope.
 ---
 
 A thin, opinionated model-validation layer for .NET built on top of
@@ -60,7 +60,7 @@ classDiagram
     IFluentValidator~T~ <|.. FluentValidator~T~
 ```
 
-`FluentValidator<T>` exposes three helpers, each accepting an optional `removeSpecialChars` flag:
+`FluentValidator<T>` exposes six helpers — three synchronous and their asynchronous counterparts — each accepting an optional `removeSpecialChars` flag:
 
 | Method | Returns | Use when |
 |---|---|---|
@@ -71,8 +71,10 @@ classDiagram
 | `ValidateAndReturnProcessOutputAsync(model, removeSpecialChars, ct)` | `Task<ProcessOutput>` | Same, for a validator with asynchronous rules. |
 | `ValidateAndReturnDataOutputAsync(model, removeSpecialChars, ct)` | `Task<DataOutput<T>>` | Same, for a validator with asynchronous rules. |
 
-When `removeSpecialChars` is `true`, the characters `'` and `.` are removed from every message — handy
-when FluentValidation's default `"'Name' must not be empty."` clashes with your presentation layer.
+When `removeSpecialChars` is `true`, the quoting `'` and the sentence-ending `.` are removed from every
+message — handy when FluentValidation's default `"'Name' must not be empty."` clashes with your presentation
+layer. An apostrophe inside a word (`can't`, `owner's`) and a full stop followed by anything but whitespace
+(`0.5`, `example.org`) belong to the text and are kept.
 
 ## Installation
 
@@ -87,6 +89,7 @@ Targets **.NET 10**. It pulls in `FluentValidation` and `ArturRios.Output` trans
 Define a model and a validator, declaring rules exactly as you would with FluentValidation:
 
 ```csharp
+using ArturRios.Output;
 using ArturRios.Validation;
 using FluentValidation;
 
@@ -133,7 +136,10 @@ Both `ProcessOutput` and `DataOutput<T>` come from
 [`ArturRios.Output`](https://www.nuget.org/packages/ArturRios.Output):
 
 - `Success` is `true` when there are no errors, `false` otherwise.
-- `Errors` holds the validation messages (already run through `removeSpecialChars` if requested).
+- `Errors` holds the validation messages (already run through `removeSpecialChars` if requested), one per
+  failure. A failure whose message is blank — or blank once stripped — is reported as
+  `The specified condition was not met for '<property>'.` rather than dropped, so `Success` is `false` exactly
+  when the model is invalid.
 - `DataOutput<T>.Data` carries the model you passed in — it is populated regardless of whether validation
   succeeded, so you can inspect the offending values alongside the errors.
 
@@ -159,18 +165,3 @@ Because `FluentValidator<T>` implements `IFluentValidator<T>` (which extends Flu
 ```csharp
 services.AddScoped<IFluentValidator<Person>, PersonValidator>();
 ```
-
-## Testing
-
-The test suite is xUnit, and every test is named with the Given / When / Then pattern. Every test class
-carries a `Category` trait, so the two kinds can be run — and reported — separately:
-
-```bash
-dotnet test src/ArturRios.Validation.sln --filter "Category=Unit"
-dotnet test src/ArturRios.Validation.sln --filter "Category=Functional"
-```
-
-Unit tests exercise the code in isolation against test doubles.
-Functional tests resolve the validator out of a real service collection, behind both contracts, and drive
-whole request-shaped flows through it.
-CI runs the two as separate jobs, and both must pass before a pull request can be merged.

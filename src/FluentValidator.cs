@@ -1,6 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using ArturRios.Output;
 using FluentValidation;
+using FluentValidation.Results;
 
 namespace ArturRios.Validation;
 
@@ -35,7 +36,7 @@ public partial class FluentValidator<T> : AbstractValidator<T>, IFluentValidator
     /// that also carries the model back.
     /// </summary>
     /// <param name="model">The model to validate.</param>
-    /// <param name="removeSpecialChars">Strips the apostrophes and full stops from the messages when <see langword="true"/>.</param>
+    /// <param name="removeSpecialChars">Strips the quoting apostrophes and sentence-ending full stops from the messages when <see langword="true"/>.</param>
     /// <returns>
     /// An envelope carrying <paramref name="model"/> whether or not it is valid, so a caller can report the
     /// failures alongside what produced them.
@@ -70,7 +71,7 @@ public partial class FluentValidator<T> : AbstractValidator<T>, IFluentValidator
     /// <see cref="DataOutput{T}"/> envelope that also carries the model back.
     /// </summary>
     /// <param name="model">The model to validate.</param>
-    /// <param name="removeSpecialChars">Strips the apostrophes and full stops from the messages when <see langword="true"/>.</param>
+    /// <param name="removeSpecialChars">Strips the quoting apostrophes and sentence-ending full stops from the messages when <see langword="true"/>.</param>
     /// <param name="cancellationToken">Cancels the validation.</param>
     /// <returns>An envelope carrying <paramref name="model"/> whether or not it is valid.</returns>
     public async Task<DataOutput<T>> ValidateAndReturnDataOutputAsync(
@@ -83,23 +84,50 @@ public partial class FluentValidator<T> : AbstractValidator<T>, IFluentValidator
                 .ConfigureAwait(false));
 
     /// <summary>
-    /// Projects a validation result onto its messages, optionally stripped of the default special characters.
+    /// Projects a validation result onto its messages, one per failure, optionally stripped of the default
+    /// special characters.
     /// </summary>
-    private static string[] Messages(FluentValidation.Results.ValidationResult result, bool removeSpecialChars)
-    {
-        var messages = result.Errors.Select(error => error.ErrorMessage);
-
-        if (removeSpecialChars)
-        {
-            messages = messages.Select(message => SpecialChars().Replace(message, string.Empty));
-        }
-
-        return [.. messages];
-    }
+    private static string[] Messages(FluentValidation.Results.ValidationResult result, bool removeSpecialChars) =>
+        [.. result.Errors.Select(failure => Message(failure, removeSpecialChars))];
 
     /// <summary>
-    /// Matches the apostrophes and full stops FluentValidation puts in its default messages.
+    /// The message reported for one failure — never blank.
     /// </summary>
-    [GeneratedRegex(@"['.]", RegexOptions.None, MatchTimeoutMilliseconds)]
+    /// <remarks>
+    /// <see cref="ProcessOutput.AddErrors"/> drops blank entries, so a failure whose message is blank — a
+    /// <c>WithMessage</c> callback that returned nothing, or a message made only of the characters
+    /// <paramref name="removeSpecialChars"/> strips — would vanish from the envelope and leave it reporting
+    /// <see cref="ProcessOutput.Success"/> for an invalid model. Such a failure is reported with
+    /// FluentValidation's own wording for a broken condition instead.
+    /// </remarks>
+    private static string Message(ValidationFailure failure, bool removeSpecialChars)
+    {
+        var message = Clean(failure.ErrorMessage, removeSpecialChars);
+
+        if (!string.IsNullOrWhiteSpace(message))
+        {
+            return message;
+        }
+
+        var fallback = string.IsNullOrWhiteSpace(failure.PropertyName)
+            ? "The specified condition was not met."
+            : $"The specified condition was not met for '{failure.PropertyName}'.";
+
+        return Clean(fallback, removeSpecialChars);
+    }
+
+    private static string Clean(string? message, bool removeSpecialChars) =>
+        removeSpecialChars ? SpecialChars().Replace(message ?? string.Empty, string.Empty) : message ?? string.Empty;
+
+    /// <summary>
+    /// Matches the quoting apostrophes and the sentence-ending full stops FluentValidation puts in its
+    /// default messages — <c>'Name' must not be empty.</c> — and nothing that belongs to the text itself.
+    /// </summary>
+    /// <remarks>
+    /// An apostrophe between two letters is part of a word (<c>can't</c>, <c>owner's</c>) and a full stop
+    /// followed by anything but whitespace is part of a value (<c>0.5</c>, <c>example.org</c>); stripping
+    /// those changed what the message said — <c>greater than '0.5'</c> read <c>greater than 05</c>.
+    /// </remarks>
+    [GeneratedRegex(@"(?<!\p{L})'|'(?!\p{L})|\.(?!\S)", RegexOptions.None, MatchTimeoutMilliseconds)]
     private static partial Regex SpecialChars();
 }

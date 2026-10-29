@@ -1,8 +1,16 @@
 # ArturRios.Validation
 
-[![Docs](https://img.shields.io/badge/docs-website-blue)](https://artur-rios.github.io/dotnet-validation)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+> [!NOTE]
+> This is the real, open-source code of dotnet-validation. Its home is Forgejo, at
+> https://git.techcraftsmen.net/artur-rios/dotnet-validation; the copy on GitHub is a read-only mirror, for viewing only, and
+> its issues and pull requests are not followed. If you want to contribute, email me at
+> arturdev@duck.com.
+
+[![Docs](https://img.shields.io/badge/docs-website-blue)](https://docs.artur-rios.tech/dotnet-validation)
+[![License: Attribution](https://img.shields.io/badge/License-Attribution-blue.svg)](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE)
 [![ArturRios.Validation](https://img.shields.io/nuget/v/ArturRios.Validation.svg?label=ArturRios.Validation)](https://www.nuget.org/packages/ArturRios.Validation)
+
+This repository lives at <https://git.techcraftsmen.net/artur-rios/dotnet-validation>. The GitHub repository is a read-only mirror of it.
 
 **`ArturRios.Validation`** — a thin, opinionated model-validation layer for .NET built on top of
 [FluentValidation](https://docs.fluentvalidation.net/). It wraps FluentValidation's `AbstractValidator<T>`
@@ -11,7 +19,7 @@ consumes: a plain array of error messages, or an [`ArturRios.Output`](https://ww
 `ProcessOutput` / `DataOutput<T>` envelope — with optional stripping of the quotes and periods that
 FluentValidation puts in its default messages.
 
-- 📚 **Full documentation:** <https://artur-rios.github.io/dotnet-validation>
+- 📚 **Full documentation:** <https://docs.artur-rios.tech/dotnet-validation>
 
 ## What you get
 
@@ -72,6 +80,7 @@ Targets **.NET 10**. It pulls in `FluentValidation` and `ArturRios.Output` trans
 1. Define a model and a validator, declaring rules exactly as you would with FluentValidation:
 
 ```csharp
+using ArturRios.Output;
 using ArturRios.Validation;
 using FluentValidation;
 
@@ -112,8 +121,11 @@ ProcessOutput result = validator.ValidateAndReturnProcessOutput(person);
 DataOutput<Person> dataResult = validator.ValidateAndReturnDataOutput(person);
 ```
 
-Every helper accepts the optional `removeSpecialChars` flag, which removes `'` and `.` from the messages,
-and every one has an asynchronous counterpart taking a `CancellationToken`:
+Every helper accepts the optional `removeSpecialChars` flag, which removes the quoting `'` and the
+sentence-ending `.` FluentValidation puts in its messages — `'Name' must not be empty.` becomes
+`Name must not be empty` — while keeping an apostrophe inside a word (`can't`) and a full stop inside a value
+(`0.5`, `example.org`). Every helper reports one non-blank message per failure, so `Success` is `false` exactly
+when the model is invalid. And every one has an asynchronous counterpart taking a `CancellationToken`:
 
 ```csharp
 string[] errors = await validator.ValidateAndReturnErrorsAsync(person, cancellationToken: ct);
@@ -129,54 +141,17 @@ like. FluentValidation refuses to run one from a synchronous call and throws
 
 | Page | What's there |
 |---|---|
-| [Overview](https://artur-rios.github.io/dotnet-validation/) | Concepts, the full API surface, and end-to-end examples. |
+| [Overview](https://docs.artur-rios.tech/dotnet-validation/docs/) | Concepts, the full API surface, and end-to-end examples. |
 
-## Testing
+## Changelog
 
-The test suite is xUnit, and every test is named with the Given / When / Then pattern. Every test class
-carries a `Category` trait, so the two kinds can be run — and reported — separately:
+Notable changes in each release are recorded in [CHANGELOG.md](https://github.com/artur-rios/dotnet-validation/blob/main/CHANGELOG.md). Releases follow
+[Semantic Versioning](https://semver.org/).
 
-```bash
-dotnet test src/ArturRios.Validation.sln --filter "Category=Unit"
-dotnet test src/ArturRios.Validation.sln --filter "Category=Functional"
-```
+## Contributing
 
-Unit tests exercise the code in isolation against test doubles.
-Functional tests resolve the validator out of a real service collection, behind both contracts, and drive whole request-shaped flows through it.
-CI runs the two as separate jobs, and both must pass before a pull request can be merged.
-
-## Branching and releases
-
-`develop` is the integration branch and the base for all new work; `main` only holds released code.
-
-1. Branch off `develop` — `feature/<name>` for features, `fix/<name>` for fixes (`chore/`, `refactor/`, `docs/`,
-   `ci/`, `test/`, `perf/` and `build/` are accepted too) — and open a pull request back into `develop`.
-2. To release, cut `release/<version>` from `develop`, set `<Version>` in `src/ArturRios.Validation.csproj` to that version
-   and open a pull request into `main`. Only `release/*` branches can be merged into `main`.
-3. Once it is merged, tag the merge commit on `main` with the version. Pushing the tag publishes the package to
-   nuget.org and GitHub Packages:
-
-   ```bash
-   git switch main && git pull
-   git tag <version> && git push origin <version>
-   ```
-
-4. Open a pull request from `main` into `develop` to bring the release back into the integration branch.
-
-Pull requests into `develop` and `main` must pass the tests and the branch policy check. Only the repository owner can
-push version tags, and the publish workflow rejects tags that do not point at a commit on `main`.
-
-## Versioning
-
-Semantic Versioning (SemVer). Breaking changes bump the major version; new non-breaking behavior bumps
-the minor; fixes bump the patch.
-
-## Build, test and publish
-
-Use the official [.NET CLI](https://learn.microsoft.com/en-us/dotnet/core/tools/) to build, test and
-publish, and Git for source control. Optional helper toolsets:
-[Dotnet Tools](https://github.com/artur-rios/dotnet-tools) ·
-[Python Dotnet Tools](https://github.com/artur-rios/python-dotnet-tools).
+Building from source, running the tests, the branching model and the release process are described in
+[CONTRIBUTING.md](https://github.com/artur-rios/dotnet-validation/blob/main/CONTRIBUTING.md).
 
 ## Legal Details
-Licensed under the [MIT License](https://en.wikipedia.org/wiki/MIT_License) — see [LICENSE](./LICENSE).
+This project is licensed under the [Artur Rios Attribution License](https://github.com/artur-rios/dotnet-validation/blob/main/LICENSE). It is free and open source: you may view, use, fork, modify, and extend it, provided you credit the author, Artur Rios, with a link to [artur-rios.tech](https://artur-rios.tech) or [github.com/artur-rios](https://github.com/artur-rios).
