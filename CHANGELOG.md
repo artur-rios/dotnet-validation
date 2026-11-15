@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - `FluentValidation` updated from 12.1.1 to 12.2.0.
+- `ArturRios.Output` updated from 3.2.0 to 3.3.1.
 
 ## [2.0.1] - 2026-10-29
 
