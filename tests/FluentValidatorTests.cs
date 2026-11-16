@@ -1,4 +1,3 @@
-using System.Linq;
 using ArturRios.Validation.Tests.Mock;
 
 namespace ArturRios.Validation.Tests;
@@ -129,5 +128,53 @@ public class FluentValidatorTests
             Assert.DoesNotContain('\'', e);
             Assert.DoesNotContain('.', e);
         });
+    }
+
+    [Fact]
+    public void GivenValidModel_WhenRemovingSpecialChars_ThenNoErrorsAreReturned()
+    {
+        Assert.Empty(_validator.ValidateAndReturnErrors(ValidPerson, removeSpecialChars: true));
+    }
+
+    [Fact]
+    public void GivenInvalidModel_WhenValidatingAndReturningErrors_ThenTheMessagesFollowTheRuleOrder()
+    {
+        var errors = _validator.ValidateAndReturnErrors(InvalidPerson);
+
+        Assert.Equal(["'Name' must not be empty.", "'Age' must be greater than '0'."], errors);
+    }
+
+    [Fact]
+    public void GivenInvalidModel_WhenValidatingAndReturningProcessOutput_ThenItsErrorsAreTheValidationMessages()
+    {
+        var output = _validator.ValidateAndReturnProcessOutput(InvalidPerson, removeSpecialChars: true);
+
+        Assert.Equal(_validator.ValidateAndReturnErrors(InvalidPerson, removeSpecialChars: true), output.Errors);
+    }
+
+    [Fact]
+    public void GivenInvalidModel_WhenValidatingAndReturningDataOutput_ThenItsErrorsAreTheValidationMessages()
+    {
+        var output = _validator.ValidateAndReturnDataOutput(InvalidPerson);
+
+        Assert.Equal(_validator.ValidateAndReturnErrors(InvalidPerson), output.Errors);
+    }
+
+    [Fact]
+    public void GivenANullModel_WhenValidatingAndReturningErrors_ThenFluentValidationRefusesIt()
+    {
+        Assert.Throws<InvalidOperationException>(() => _validator.ValidateAndReturnErrors(null!));
+    }
+
+    [Fact]
+    public void GivenANullModel_WhenValidatingAndReturningProcessOutput_ThenFluentValidationRefusesIt()
+    {
+        Assert.Throws<InvalidOperationException>(() => _validator.ValidateAndReturnProcessOutput(null!));
+    }
+
+    [Fact]
+    public void GivenANullModel_WhenValidatingAndReturningDataOutput_ThenFluentValidationRefusesIt()
+    {
+        Assert.Throws<InvalidOperationException>(() => _validator.ValidateAndReturnDataOutput(null!));
     }
 }
