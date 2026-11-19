@@ -91,20 +91,4 @@ public class ValidationThroughDependencyInjectionTests
         Assert.Equal(25, outputs.Count(output => output.Success));
         Assert.All(outputs.Where(output => !output.Success), output => Assert.Equal(2, output.Errors.Count));
     }
-
-    [Fact]
-    public void GivenTheStrippedMessages_WhenComparedWithTheOriginals_ThenOnlyTheSpecialCharsDiffer()
-    {
-        using var provider = BuildProvider();
-
-        var validator = provider.GetRequiredService<IFluentValidator<Person>>();
-        var model = new Person { Name = string.Empty, Age = 0 };
-
-        var raw = validator.ValidateAndReturnErrors(model);
-        var stripped = validator.ValidateAndReturnErrors(model, removeSpecialChars: true);
-
-        Assert.Equal(
-            raw.Select(message => message.Replace("'", string.Empty).Replace(".", string.Empty)),
-            stripped);
-    }
 }

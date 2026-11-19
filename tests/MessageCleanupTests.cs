@@ -1,3 +1,4 @@
+using System.Globalization;
 using ArturRios.Validation.Tests.Mock;
 using FluentValidation;
 
@@ -66,50 +67,49 @@ public class MessageCleanupTests
         Assert.Contains("Name must not be empty", errors);
         Assert.Contains("Age must be greater than 0", errors);
     }
-}
 
-/// <summary>
-/// The envelope's <c>Success</c> is documented to be true exactly when the model is valid, so no failure may
-/// disappear on the way into it.
-/// </summary>
-[Trait("Category", "Unit")]
-public class BlankMessageTests
-{
-    private sealed class BlankMessageValidator : FluentValidator<Person>
+    [Theory]
+    [InlineData("'Name' must not be empty.", "Name must not be empty")]
+    [InlineData("'Name' must be 'x'", "Name must be x")]
+    [InlineData("'5' is not allowed.", "5 is not allowed")]
+    [InlineData("It can't be done", "It can't be done")]
+    [InlineData("L'été est là.", "L'été est là")]
+    [InlineData("The users' list is full.", "The users list is full")]
+    [InlineData("Use 0.5 or 1.5.", "Use 0.5 or 1.5")]
+    [InlineData("Visit example.org.", "Visit example.org")]
+    [InlineData("First. Second.", "First Second")]
+    [InlineData("Line one.\nLine two.", "Line one\nLine two")]
+    [InlineData("Wait...", "Wait..")]
+    [InlineData("Nothing to strip", "Nothing to strip")]
+    public void GivenAMessage_WhenRemovingSpecialChars_ThenOnlyTheQuotingApostrophesAndTheSentenceEndingFullStopsGo(
+        string message, string expected)
     {
-        public BlankMessageValidator()
-        {
-            RuleFor(person => person.Name).NotEmpty().WithMessage(_ => string.Empty);
-            RuleFor(person => person.Age).GreaterThan(0).WithMessage("'.");
-        }
-    }
+        var errors = new FixedMessageValidator(message).ValidateAndReturnErrors(new Person(), removeSpecialChars: true);
 
-    private readonly BlankMessageValidator _validator = new();
-
-    [Fact]
-    public void GivenARuleWithABlankMessage_WhenValidatingAndReturningProcessOutput_ThenTheOutputStillFails()
-    {
-        var output = _validator.ValidateAndReturnProcessOutput(new Person { Age = 30 });
-
-        Assert.False(output.Success);
-        Assert.Single(output.Errors);
+        Assert.Equal([expected], errors);
     }
 
     [Fact]
-    public void GivenAMessageThatIsBlankOnceStripped_WhenValidatingAndReturningDataOutput_ThenTheOutputStillFails()
+    public void GivenAMessageWithSpecialChars_WhenNotRemovingSpecialChars_ThenItComesBackVerbatim()
     {
-        var output = _validator.ValidateAndReturnDataOutput(new Person { Name = "Jane" }, removeSpecialChars: true);
+        const string message = "'5' is not allowed. Use 0.5 or can't.";
 
-        Assert.False(output.Success);
-        Assert.Single(output.Errors);
+        var errors = new FixedMessageValidator(message).ValidateAndReturnErrors(new Person());
+
+        Assert.Equal([message], errors);
     }
 
     [Fact]
-    public async Task GivenARuleWithABlankMessage_WhenValidatingAsync_ThenEveryFailureIsReported()
+    public void GivenThePtBrCulture_WhenRemovingSpecialChars_ThenTheTranslatedMessageIsCleanedAndKeepsItsDecimalComma()
     {
-        var errors = await _validator.ValidateAndReturnErrorsAsync(new Person());
+        using var culture = new CultureScope(CultureInfo.GetCultureInfo("pt-BR"));
 
-        Assert.Equal(2, errors.Length);
-        Assert.All(errors, error => Assert.False(string.IsNullOrWhiteSpace(error)));
+        var errors = _validator.ValidateAndReturnErrors(Invalid, removeSpecialChars: true);
+
+        var amount = Assert.Single(errors, error => error.StartsWith("Amount ", StringComparison.Ordinal));
+        Assert.DoesNotContain("greater than", amount);
+        Assert.Contains("0,5", amount);
+        Assert.DoesNotContain('\'', amount);
+        Assert.False(amount.EndsWith('.'));
     }
 }

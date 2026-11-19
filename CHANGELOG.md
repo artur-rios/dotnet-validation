@@ -7,11 +7,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.0.3] - 2026-11-19
+
+### Changed
+
+- `ArturRios.Output` updated from 3.3.1 to 3.3.2.
+
 ## [2.0.2] - 2026-11-14
 
 ### Changed
 
 - `FluentValidation` updated from 12.1.1 to 12.2.0.
+- `ArturRios.Output` updated from 3.2.0 to 3.3.1.
 
 ## [2.0.1] - 2026-10-29
 
@@ -65,7 +72,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
   a string array, a `ProcessOutput` or a `DataOutput<T>`, optionally stripping quotes and periods from the messages.
 - `IFluentValidator<T>`, the abstraction over it.
 
-[Unreleased]: https://github.com/artur-rios/dotnet-validation/compare/2.0.2...HEAD
+[Unreleased]: https://github.com/artur-rios/dotnet-validation/compare/2.0.3...HEAD
+[2.0.3]: https://github.com/artur-rios/dotnet-validation/compare/2.0.2...2.0.3
 [2.0.2]: https://github.com/artur-rios/dotnet-validation/compare/2.0.1...2.0.2
 [2.0.1]: https://github.com/artur-rios/dotnet-validation/compare/2.0.0...2.0.1
 [2.0.0]: https://github.com/artur-rios/dotnet-validation/compare/v1.1.0...2.0.0
